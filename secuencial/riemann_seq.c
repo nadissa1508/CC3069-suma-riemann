@@ -68,3 +68,34 @@ static int parsear_double_finito(const char *texto, double *valor) {
     *valor = convertido;
     return 1;
 }
+
+int main(int argc, char *argv[]) {
+    long n = 1000000000L;
+    double a = 0.0;
+    double b = 1000.0;
+
+    if (argc > 4 || (argc > 1 && !parsear_long_positivo(argv[1], &n)) ||
+        (argc > 2 && !parsear_double_finito(argv[2], &a)) ||
+        (argc > 3 && !parsear_double_finito(argv[3], &b))) {
+        fprintf(stderr, "Uso: %s [n>0] [a] [b]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    struct timespec inicio, fin;
+    clock_gettime(CLOCK_MONOTONIC, &inicio);
+
+    double resultado = riemann_secuencial(a, b, n);
+
+    clock_gettime(CLOCK_MONOTONIC, &fin);
+    double tiempo = (fin.tv_sec - inicio.tv_sec) +
+                    (fin.tv_nsec - inicio.tv_nsec) / 1e9;
+
+    printf("n=%ld a=%.4f b=%.4f\n", n, a, b);
+    printf("Area = %.10f\n", resultado);
+    printf("Tiempo = %.6f s\n", tiempo);
+
+    // Salida estable que procesa benchmark.py 
+    printf("RESULT,seq,1,%ld,%.10f,%.6f\n", n, resultado, tiempo);
+
+    return 0;
+}
