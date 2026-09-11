@@ -76,3 +76,79 @@ double riemann_paralelo(double a, double b, long n, int num_threads,
 
     return suma;
 }
+
+static int parsear_long_positivo(const char *texto, long *valor) {
+    char *fin;
+    errno = 0;
+    long convertido = strtol(texto, &fin, 10);
+    if (errno != 0 || fin == texto || *fin != '\0' || convertido <= 0) {
+        return 0;
+    }
+    *valor = convertido;
+    return 1;
+}
+
+static int parsear_int_positivo(const char *texto, int *valor) {
+    long convertido;
+    if (!parsear_long_positivo(texto, &convertido) || convertido > INT_MAX) {
+        return 0;
+    }
+    *valor = (int)convertido;
+    return 1;
+}
+
+static int parsear_double_finito(const char *texto, double *valor) {
+    char *fin;
+    errno = 0;
+    double convertido = strtod(texto, &fin);
+    if (errno != 0 || fin == texto || *fin != '\0' || !isfinite(convertido)) {
+        return 0;
+    }
+    *valor = convertido;
+    return 1;
+}
+
+static int schedule_valido(const char *schedule_tipo) {
+    return strcmp(schedule_tipo, "static") == 0 ||
+           strcmp(schedule_tipo, "dynamic") == 0 ||
+           strcmp(schedule_tipo, "guided") == 0;
+}
+
+int main(int argc, char *argv[]) {
+    long n = 1000000000L;
+    double a = 0.0;
+    double b = 1000.0;
+    int num_threads = omp_get_max_threads();
+    const char *sched = (argc > 5) ? argv[5] : "static";
+    int chunk = 1000;
+
+    if (argc > 7 || (argc > 1 && !parsear_long_positivo(argv[1], &n)) ||
+        (argc > 2 && !parsear_double_finito(argv[2], &a)) ||
+        (argc > 3 && !parsear_double_finito(argv[3], &b)) ||
+        (argc > 4 && !parsear_int_positivo(argv[4], &num_threads)) ||
+        !schedule_valido(sched) ||
+        (argc > 6 && !parsear_int_positivo(argv[6], &chunk))) {
+        fprintf(stderr,
+                "Uso: %s [n>0] [a] [b] [threads>0] "
+                "[static|dynamic|guided] [chunk>0]\n",
+                argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    double inicio = omp_get_wtime();
+    double resultado = riemann_paralelo(a, b, n, num_threads, sched, chunk);
+    double fin = omp_get_wtime();
+    double tiempo = fin - inicio;
+
+    printf("n=%ld a=%.4f b=%.4f threads=%d schedule=%s chunk=%d%s\n",
+           n, a, b, num_threads, sched, chunk,
+           strcmp(sched, "static") == 0 ? " (no se usa con static)" : "");
+    printf("Area = %.10f\n", resultado);
+    printf("Tiempo = %.6f s\n", tiempo);
+
+    // Salida estable que procesa benchmark.py 
+    printf("RESULT,par,%d,%ld,%.10f,%.6f,%s,%d\n",
+           num_threads, n, resultado, tiempo, sched, chunk);
+
+    return 0;
+}
