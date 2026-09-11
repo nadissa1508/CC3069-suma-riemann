@@ -46,3 +46,25 @@ double riemann_secuencial(double a, double b, long n) {
     }
     return suma;
 }
+
+static int parsear_long_positivo(const char *texto, long *valor) {
+    char *fin;
+    errno = 0;
+    long convertido = strtol(texto, &fin, 10);
+    if (errno != 0 || fin == texto || *fin != '\0' || convertido <= 0) {
+        return 0;
+    }
+    *valor = convertido;
+    return 1;
+}
+
+static int parsear_double_finito(const char *texto, double *valor) {
+    char *fin;
+    errno = 0;
+    double convertido = strtod(texto, &fin);
+    if (errno != 0 || fin == texto || *fin != '\0' || !isfinite(convertido)) {
+        return 0;
+    }
+    *valor = convertido;
+    return 1;
+}
