@@ -33,12 +33,13 @@ import sys
 # Cada integrante debe ejecutar esta configuración completa en su propia máquina.
 # Mantengan N, A y B iguales entre el baseline y todas las variantes paralelas.
 # ------------------------- CONFIG -------------------------
-N = 200_000_000          # numero de rectangulos (10^9 puede tardar bastante)
+N = 100_000_000          # numero de rectangulos (bajen este valor si sus
+                          # pruebas tardan demasiado; 10^9 puede tardar minutos)
 A, B = 0.0, 1000.0
 THREAD_COUNTS = [1, 2, 4, 8, 16]
 SCHEDULES = ["static", "dynamic", "guided"]
 CHUNK = 1000
-REPETICIONES = 5         # corridas por configuracion, se promedian
+REPETICIONES = 3         # corridas por configuracion, se promedian
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SEQ_BIN = os.path.join(ROOT, "secuencial", "riemann_seq")
