@@ -17,9 +17,15 @@ referencia de corrección, es
 - Algoritmo secuencial: un ciclo recorre y acumula las `n` contribuciones.
 - Origen de los datos: los valores `n`, `a` y `b` se reciben por línea de
   comandos o usan los valores predeterminados `10^9`, `0` y `1000`.
-- Tamaño de muestra elegido: [PENDIENTE: indicar cada valor de `n` probado].
-- Justificación de la muestra: [PENDIENTE: explicar por qué los tamaños elegidos
-  producen tiempos medibles y representan cargas pequeña, mediana y grande].
+- Tamaño de muestra elegido: Nadissa Angie utilizó `n=200,000,000` y Cristian
+  utilizó `n=100,000,000`. En ambos casos se mantuvieron constantes `n`, `a=0`
+  y `b=1000` entre la línea base secuencial y todas las configuraciones paralelas
+  del mismo integrante.
+- Justificación de la muestra: ambos tamaños producen líneas base de varios
+  segundos en sus respectivos equipos, por lo que el trabajo computacional tiene
+  suficiente duración para medir el efecto de la paralelización. Los tamaños son
+  distintos entre integrantes, así que las comparaciones cuantitativas se realizan
+  únicamente contra la línea base obtenida en la misma computadora.
 - Memoria: no se almacenan los rectángulos. Se usan variables escalares para
   `h`, `suma`, el índice y el punto medio; la memoria auxiliar es O(1) en la
   versión secuencial y O(P) para las sumas privadas administradas por OpenMP.
@@ -97,7 +103,7 @@ Eficiencia E = S / P
 esa corrida. La eficiencia puede expresarse como fracción o como porcentaje
 `100E%`, indicando cuál formato se usa.
 
-### Integrante: Angie Vela
+### Integrante: Nadissa Angie Vela
 
 Equipo/CPU: 
   - Procesador 11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz (2.30 GHz) 
@@ -108,13 +114,13 @@ Sistema/compilador:
 
 #### Configuración experimental
 
-Las mediciones de Nadissa se realizaron con `n=200,000,000` rectángulos en el
+Las mediciones de Nadissa Angie se realizaron con `n=200,000,000` rectángulos en el
 intervalo `[0,1000]`. Se probaron `1`, `2`, `4`, `8` y `16` threads con los
 schedules `static`, `dynamic` y `guided`. Para `dynamic` y `guided` se utilizó un
 chunk de `1000`; en `static` este parámetro no se usa. Cada valor de la tabla es
 el promedio de tres repeticiones y se acompaña con su desviación estándar. Las
-capturas documentan la ejecución en WSL Ubuntu 20.04; el modelo de CPU no está
-registrado en las evidencias disponibles y debe agregarse antes de la entrega.
+capturas documentan la ejecución en WSL Ubuntu 20.04 sobre un equipo con Intel
+Core i7-11800H, 8 núcleos, 16 hilos y 16 GB de RAM.
 Los valores originales, sin redondear, se conservan en
 [`resultados_nadissa.csv`](resultados_nadissa.csv).
 
@@ -245,19 +251,149 @@ Equipo/CPU:
 Sistema/compilador:
 - Windows 11 Home Single Language
 
-| Integrante | Equipo/CPU | n | Threads | Schedule | Chunk | T secuencial (s) | T paralelo (s) | Speedup | Eficiencia |
-|---|---|---:|---:|---|---:|---:|---:|---:|---:|
-| Cristian Tunchez | [PENDIENTE] | [PENDIENTE] | 1 | static | N/A | [PENDIENTE] | [PENDIENTE] | [CALCULAR] | [CALCULAR] |
+#### Configuración experimental
 
-Para cada integrante se recomienda incluir:
+Cristian realizó sus mediciones con `n=100,000,000` rectángulos en el intervalo
+`[0,1000]`. Probó `1`, `2`, `4`, `8` y `16` threads con los schedules `static`,
+`dynamic` y `guided`. El chunk fue `1000` para `dynamic` y `guided`; no se usa en
+la variante `static`. Cada tiempo corresponde al promedio de tres repeticiones y
+se presenta junto con su desviación estándar. Los valores originales se conservan
+en [`resultados_sebas.csv`](resultados_sebas.csv).
 
-- una tabla completa y una gráfica de tiempo contra threads;
-- una gráfica de speedup con la línea ideal `S=P`;
-- una gráfica de eficiencia contra threads;
-- capturas de corridas representativas con comandos y salidas visibles;
-- un análisis de tendencias, anomalías, overhead y relación con núcleos físicos.
+#### Resultados
+
+| Versión | Threads | Schedule | Chunk | Tiempo promedio (s) | SD (s) | Speedup | Eficiencia |
+|---|---:|---|---:|---:|---:|---:|---:|
+| Secuencial | 1 | — | — | 6.8178 | 0.2936 | 1.0000x | 100.00% |
+| Paralela | 1 | static | N/A | 6.5107 | 0.0703 | 1.0472x | 104.72% |
+| Paralela | 2 | static | N/A | 3.8330 | 0.1031 | 1.7787x | 88.93% |
+| Paralela | 4 | static | N/A | 2.1477 | 0.0532 | 3.1745x | 79.36% |
+| Paralela | 8 | static | N/A | 1.6635 | 0.0598 | 4.0985x | 51.23% |
+| Paralela | 16 | static | N/A | 1.5780 | 0.0529 | 4.3206x | 27.00% |
+| Paralela | 1 | dynamic | 1000 | 7.0803 | 0.3415 | 0.9629x | 96.29% |
+| Paralela | 2 | dynamic | 1000 | 3.7954 | 0.0540 | 1.7963x | 89.82% |
+| Paralela | 4 | dynamic | 1000 | 2.1887 | 0.0522 | 3.1150x | 77.87% |
+| Paralela | 8 | dynamic | 1000 | 1.5535 | 0.0552 | 4.3887x | 54.86% |
+| Paralela | 16 | dynamic | 1000 | 1.5102 | 0.0328 | 4.5146x | 28.22% |
+| Paralela | 1 | guided | 1000 | 6.5995 | 0.2439 | 1.0331x | 103.31% |
+| Paralela | 2 | guided | 1000 | 3.7819 | 0.0176 | 1.8028x | 90.14% |
+| Paralela | 4 | guided | 1000 | 2.2337 | 0.0383 | 3.0522x | 76.30% |
+| Paralela | 8 | guided | 1000 | 1.7532 | 0.0188 | 3.8888x | 48.61% |
+| Paralela | 16 | guided | 1000 | 1.6060 | 0.1156 | 4.2453x | 26.53% |
+
+La línea base de Cristian fue `6.8178 s`. Los speedups y eficiencias de esta
+subsección se calculan exclusivamente con ese tiempo, porque sus pruebas se
+realizaron en un equipo y con un valor de `n` diferentes a los de Nadissa Angie.
+
+#### Escalabilidad y comparación de schedules
+
+Los tres schedules muestran una reducción clara del tiempo al pasar de uno a
+varios threads. Con `static`, el speedup evoluciona de `1.7787x` con 2 threads a
+`3.1745x` con 4, `4.0985x` con 8 y `4.3206x` con 16. La mejora adicional entre 8
+y 16 threads es pequeña: el tiempo solo baja de `1.6635 s` a `1.5780 s`, mientras
+la eficiencia cae de `51.23%` a `27.00%`. La Figura 6 muestra que las curvas se
+alejan del speedup ideal conforme aumenta `P`, y la Figura 7 evidencia la pérdida
+de eficiencia.
+
+![Speedup de las pruebas de Cristian](graficas/speedup_sebas.png)
+
+*Figura 6. Speedup medido por Cristian para los tres schedules.*
+
+![Eficiencia de las pruebas de Cristian](graficas/eficiencia_sebas.png)
+
+*Figura 7. Eficiencia de las configuraciones evaluadas por Cristian.*
+
+La reducción de eficiencia no constituye un fallo del programa. Cristian dispone
+de 4 núcleos y 8 hilos de hardware; ejecutar 16 threads de OpenMP supera esa
+capacidad lógica y es consistente con las ganancias decrecientes observadas, ya
+que aumenta la competencia por recursos sin duplicar la capacidad física. También
+intervienen el costo de crear y coordinar threads y la combinación final de la
+reducción.
+
+El schedule con mejor desempeño no fue el mismo para todas las cantidades de
+threads: `guided` obtuvo el mayor speedup con 2 (`1.8028x`), `static` con 4
+(`3.1745x`) y `dynamic` con 8 (`4.3887x`) y 16 (`4.5146x`). Las diferencias entre
+schedules son relativamente pequeñas frente al efecto de aumentar threads hasta
+8. Aunque las iteraciones tienen costos similares y `dynamic` puede introducir
+overhead de asignación, en este equipo produjo el mejor resultado global. Esta es
+una observación limitada a las corridas de Cristian, no una propiedad universal
+de `dynamic`.
+
+Los valores de un thread para `static` (`1.0472x`) y `guided` (`1.0331x`) quedan
+ligeramente por encima de la línea base, mientras `dynamic` obtuvo `0.9629x`.
+Estas diferencias pequeñas no representan aceleración por paralelismo con un solo
+thread; deben interpretarse junto con la variabilidad entre corridas y los costos
+distintos del runtime. De igual manera, una eficiencia mayor a 100% con `P=1`
+solo refleja que esa media fue algo menor que la media secuencial de referencia.
+
+#### Mejor configuración y variabilidad
+
+La mejor configuración de Cristian fue `dynamic` con 16 threads y chunk `1000`:
+alcanzó `1.5102 s`, speedup de `4.5146x` y eficiencia de `28.22%`. Frente a la
+línea base de `6.8178 s`, representa una reducción aproximada del `77.85%` del
+tiempo. Sin embargo, el salto de 8 a 16 threads fue reducido (`4.3887x` a
+`4.5146x`), por lo que 8 threads ofrecieron una relación más favorable entre
+aceleración y eficiencia (`54.86%`).
+
+La desviación estándar de la mejor configuración fue `0.0328 s`. Para 16 threads,
+`static` presentó `0.0529 s` y `guided`, `0.1156 s`; la línea base tuvo
+`0.2936 s`. Las repeticiones y el uso del promedio permiten representar esta
+variabilidad sin depender de una sola corrida.
+
+#### Evidencia de ejecución
+
+Las Figuras 8 y 9 documentan la ejecución del benchmark de Cristian. En ellas se
+observan la línea base, las configuraciones de threads y schedules, y la creación
+del CSV y las gráficas utilizadas en el análisis.
+
+![Primera parte del benchmark de Cristian](capturas/benchmark1_sebas.png)
+
+*Figura 8. Línea base y primeras configuraciones del benchmark de Cristian.*
+
+![Segunda parte del benchmark de Cristian](capturas/benchmark2_sebas.png)
+
+*Figura 9. Configuraciones restantes y generación de resultados de Cristian.*
+
+#### Respuesta resumida
+
+- **¿La paralelización mejoró el algoritmo?** Sí. La mejor configuración redujo
+  el tiempo de `6.8178 s` a `1.5102 s`.
+- **¿Cuál fue el mejor speedup?** `4.5146x`.
+- **¿Cuál fue la mejor configuración?** 16 threads, `schedule(dynamic)` y chunk
+  `1000`, con eficiencia de `28.22%`.
+- **¿Qué pasó con la eficiencia?** Disminuyó al crecer el número de threads y la
+  ganancia fue especialmente limitada al superar los 8 hilos lógicos del equipo.
+- **¿Qué schedule tuvo mejor desempeño?** `dynamic` obtuvo el mejor resultado
+  global de las pruebas de Cristian, aunque el ganador varió según `P`.
 
 ## 5. Conclusiones
 
-[PENDIENTE: resumir con base en mediciones reales cuándo la paralelización fue
-útil, qué configuración funcionó mejor y por qué la eficiencia cambió con P].
+La paralelización de la suma de Riemann con OpenMP redujo de forma importante el
+tiempo de ejecución en las dos computadoras. La independencia de las iteraciones
+permitió distribuir el ciclo con `parallel for`, mientras `reduction(+:suma)`
+evitó condiciones de carrera y mantuvo resultados numéricamente consistentes con
+la versión secuencial. Esta estrategia mejoró el rendimiento sin modificar el
+método del punto medio ni la función integrada.
+
+En las pruebas de Nadissa Angie, el mejor resultado fue `guided` con 16 threads:
+`0.4573 s`, speedup de `8.0677x` y eficiencia de `50.42%`, frente a una línea base
+de `3.6895 s`. En las de Cristian, el mejor resultado fue `dynamic` con 16
+threads: `1.5102 s`, speedup de `4.5146x` y eficiencia de `28.22%`, frente a su
+línea base de `6.8178 s`. Estos valores no deben compararse como una competencia
+directa entre equipos, pues se usaron procesadores y tamaños de `n` diferentes;
+cada speedup es válido respecto de la línea base local del mismo integrante.
+
+En ambos casos el speedup aumentó con el número de threads, pero no de forma
+lineal, y la eficiencia disminuyó conforme creció `P`. El comportamiento refleja
+que el overhead de OpenMP y los recursos limitados del procesador adquieren mayor
+peso al añadir threads. La saturación es más visible en el equipo de Cristian al
+pasar de 8 a 16 threads, cantidad que excede sus 8 hilos de hardware. Por ello,
+la configuración con menor tiempo no necesariamente es la de mejor eficiencia.
+
+Los resultados también demuestran que el schedule óptimo depende del entorno:
+`guided` fue superior en las corridas de Nadissa Angie, mientras `dynamic` obtuvo
+el mejor tiempo global en las de Cristian. Aunque `static` era una elección
+teórica razonable por el costo uniforme de las iteraciones, las mediciones reales
+justifican evaluar varias políticas en cada máquina. En consecuencia, la
+paralelización fue efectiva para esta carga grande, pero su beneficio práctico
+depende del número de threads, del runtime de OpenMP y del hardware disponible.
