@@ -238,8 +238,12 @@ flotante de la reducción paralela y no indica un error de implementación.
 
 ### Integrante: Cristian Tunchez
 
-Equipo/CPU: [PENDIENTE]  
-Sistema/compilador: [PENDIENTE]
+Equipo/CPU:
+- AMD Ryzen 5 3500U with Radeon Vega Mobile Gfx (2.10 GHz)
+- 4 núcleos, 8 hilos
+- RAM 8.0 GB
+Sistema/compilador:
+- Windows 11 Home Single Language
 
 | Integrante | Equipo/CPU | n | Threads | Schedule | Chunk | T secuencial (s) | T paralelo (s) | Speedup | Eficiencia |
 |---|---|---:|---:|---|---:|---:|---:|---:|---:|
